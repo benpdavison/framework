@@ -14,6 +14,7 @@ use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\ViewErrorBag;
 use Throwable;
 
 class View implements ArrayAccess, Htmlable, ViewContract
@@ -210,13 +211,14 @@ class View implements ArrayAccess, Htmlable, ViewContract
      * Add validation errors to the view.
      *
      * @param  \Illuminate\Contracts\Support\MessageProvider|array  $provider
+     * @param  string  $bag
      * @return $this
      */
-    public function withErrors($provider)
+    public function withErrors($provider, $bag = 'default')
     {
-        $this->with('errors', $this->formatErrors($provider));
-
-        return $this;
+        return $this->with('errors', (new ViewErrorBag)->put(
+            $bag, $this->formatErrors($provider)
+        ));
     }
 
     /**
